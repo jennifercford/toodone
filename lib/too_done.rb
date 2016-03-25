@@ -2,7 +2,8 @@ require "too_done/version"
 require "too_done/init_db"
 require "too_done/user"
 require "too_done/session"
-require "too_done/todolist"
+require "too_done/list"
+require "too_done/task"
 
 require "thor"
 require "pry"
@@ -19,8 +20,8 @@ module TooDone
       # find or create the right todo list
       list = List.find_or_create_by(title: options[:list],
                                     user_id: current_user.id)
-      task = Task.create(task: task, list_id: list.id)
-binding.pry 
+      task = Task.new(task: task, list_id: list.id, deadline: options[:date])
+    #  binding.pry
       # create a new item under that list, with optional date
     end
 
@@ -29,6 +30,7 @@ binding.pry
       :desc => "The todo list whose tasks will be edited."
     def edit
       # find the right todo list
+      # list = List.find_by(title: options: )
       # BAIL if it doesn't exist and have tasks
       # display the tasks and prompt for which one to edit
       # allow the user to change the title, due date
@@ -53,6 +55,9 @@ binding.pry
       \t\t\t\t\tLimits results to those with a due date."
     def show
       # find or create the right todo list
+      puts "Which list would you like to view?"
+      title = gets.chomp.downcase.to_s
+      list = find_by(title: title)
       # show the tasks ordered as requested, default to reverse order (recently entered first)
     end
 
@@ -73,6 +78,7 @@ binding.pry
     def switch(username)
       user = User.find_or_create_by(name: username)
       user.sessions.create
+      puts user
     end
 
     private
@@ -82,5 +88,5 @@ binding.pry
   end
 end
 
-# binding.pry
+#binding.pry
 TooDone::App.start(ARGV)
