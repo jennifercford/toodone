@@ -20,8 +20,8 @@ module TooDone
       # find or create the right todo list
       list = List.find_or_create_by(title: options[:list],
                                     user_id: current_user.id)
-      task = Task.new(task: task, list_id: list.id, deadline: options[:date])
-    #  binding.pry
+      task = Task.create(task: task, list_id: list.id, deadline: options[:date])
+    #  binding.pry #remember to change create to new so info not saved!
       # create a new item under that list, with optional date
     end
 
@@ -55,10 +55,12 @@ module TooDone
       \t\t\t\t\tLimits results to those with a due date."
     def show
       # find or create the right todo list
-      puts "Which list would you like to view?"
-      title = gets.chomp.downcase.to_s
-      list = find_by(title: title)
+      # puts "Which list would you like to view?"
+      # list = gets.chomp.downcase.to_s
+      list = List.find_or_create_by(title: options[:list],
+                                    user_id: current_user.id)
       # show the tasks ordered as requested, default to reverse order (recently entered first)
+      show = Task.find_by(list_id: list.id).order(options[:sort])
     end
 
     desc "delete [LIST OR USER]", "Delete a todo list or a user."
